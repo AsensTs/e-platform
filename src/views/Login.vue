@@ -2,16 +2,83 @@
   <div class="login-mod">
     <div class="login-box">
       <img class="login-logo" src="../assets/images/logo.png" />
-      <div class="login-content">
-        
-      </div>
+      <el-form
+        class="login-form"
+        :model="loginForm"
+        label-width="60px"
+        :rules="rules"
+        ref="loginForm"
+      >
+        <el-form-item label="账号" class="login-item" prop="username">
+          <el-input
+            class="login-input"
+            type="text"
+            placeholder="请输入账号"
+            prefix-icon="el-icon-user-solid"
+            v-model="loginForm.username"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="密码" class="login-item" prop="password">
+          <el-input
+            class="login-input"
+            type="password"
+            placeholder="请输入密码"
+            show-password
+            prefix-icon="el-icon-key"
+            v-model="loginForm.password"
+          ></el-input>
+        </el-form-item>
+        <el-form-item class="login-item">
+          <el-button class="login-signIn" @click="login('loginForm')">登录</el-button>
+          <el-button class="login-signUp">注册</el-button>
+          <el-button class="login-reset" @click="resetForm('loginForm')"
+            >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-export default Vue.extend({});
+import "../plugins/element";
+
+export default Vue.extend({
+  data() {
+    return {
+      loginForm: {
+        username: "",
+        password: ""
+      },
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
+        ]
+      }
+    };
+  },
+  methods: {
+    resetForm(formName: string): void {
+      const refs: any = this.$refs[formName];
+      refs.resetFields();
+    },
+    login(formName: string): void {
+      const refs: any = this.$refs[formName];
+      refs.validate(async (valid: any) => {
+        if (!valid) return;
+        const { data } = await this.$http.post("login", this.loginForm);
+        if (data.meta.status !== 200) return console.log("登陆失败");
+        console.log("登陆成功");
+      });
+    }
+  }
+});
 </script>
 
 <style lang="scss">
@@ -22,15 +89,15 @@ export default Vue.extend({});
   height: 100%;
   .login-box {
     background-color: #fff;
-    width: 30%;
-    height: 40%;
-    min-width: 400px;
+    width: 500px;
+    height: 0;
+    padding-bottom: 320px;
     position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     .login-logo {
-      height: 60%;
+      height: 50%;
       border: 1px solid #eee;
       border-radius: 50%;
       text-align: center;
@@ -38,6 +105,27 @@ export default Vue.extend({});
       transform: translate(-50%, -50%);
       background-color: #fff;
       box-shadow: 0px 0px 10px #eee;
+    }
+    .login-form {
+      margin-top: 20%;
+      .login-item {
+        width: 85%;
+        margin: 0 auto 25px auto;
+        .el-form-item__label {
+          line-height: 50px;
+        }
+        .login-input {
+          .el-input__inner {
+            height: 5rem;
+            line-height: 5rem;
+          }
+        }
+      }
+      .login-item:nth-child(3) {
+        .el-form-item__content {
+          margin: 0 !important;
+        }
+      }
     }
   }
 }
