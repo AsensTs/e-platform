@@ -29,7 +29,9 @@
           ></el-input>
         </el-form-item>
         <el-form-item class="login-item">
-          <el-button class="login-signIn" @click="login('loginForm')">登录</el-button>
+          <el-button class="login-signIn" @click="login('loginForm')"
+            >登录</el-button
+          >
           <el-button class="login-signUp">注册</el-button>
           <el-button class="login-reset" @click="resetForm('loginForm')"
             >重置</el-button
@@ -73,8 +75,21 @@ export default Vue.extend({
       refs.validate(async (valid: any) => {
         if (!valid) return;
         const { data } = await this.$http.post("login", this.loginForm);
-        if (data.meta.status !== 200) return console.log("登陆失败");
-        console.log("登陆成功");
+        if (data.meta.status !== 200)
+          return this.$message.error("登陆失败! 密码或账户名不正确");
+        this.$message.success("登陆成功");
+        // 登陆成功后操作
+        /*
+        1. 将登陆成功后的 token, 保存到客户端的 sessionStorage 中
+          1.1 项目中除了登陆之外的其他API接口， 必须在登陆之后才能访问
+          1.2 token 只应在当前网站打开期间有效， 所以将token保存在sessionStorage中、
+        
+        2. 通过编程式导航跳转到后台主页，路由地址是 /home
+          this.$router.push({path: 'home';}});
+        */
+        window.sessionStorage.setItem("stoken", data.data.token);
+        console.log(data.data.token);
+        this.$router.push({ name: "Home" });
       });
     }
   }
