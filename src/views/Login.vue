@@ -88,7 +88,6 @@ export default Vue.extend({
           this.$router.push({path: 'home';}});
         */
         window.sessionStorage.setItem("stoken", data.data.token);
-        console.log(data.data.token);
         this.$router.push({ name: "Home" });
       });
     }

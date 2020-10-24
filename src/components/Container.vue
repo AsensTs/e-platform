@@ -5,7 +5,7 @@
         <img class="logo-img" alt="Vue logo" src="../assets/images/logo.png" />
         <h3 class="title">电商后台管理系统</h3>
       </div>
-      <el-button size="small">退出</el-button>
+      <el-button size="small" @click="logout">退出</el-button>
     </el-header>
     <el-container class="co-container">
       <el-col class="col-aside" :xs="8" :sm="8" :md="6" :lg="3" :xl="3">
@@ -26,6 +26,12 @@ import navMenu from "./navMenu.vue";
 export default Vue.extend({
   components: {
     navMenu
+  },
+  methods: {
+    logout() {
+      window.sessionStorage.clear();
+      this.$router.push({ name: "Login" });
+    }
   }
 });
 </script>
