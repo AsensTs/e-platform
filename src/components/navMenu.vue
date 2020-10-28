@@ -1,32 +1,35 @@
 <template>
-  <el-row class="tac">
-    <el-col>
-      <el-menu
-        background-color="#373a40"
-        text-color="#fff"
-        active-text-color="#ffd04b"
+  <div>
+    <div class="toggle-btn" @click="elisCollapse">|||</div>
+    <el-menu
+      background-color="#373a40"
+      text-color="#fff"
+      active-text-color="#ffd04b"
+      unique-opened
+      :collapse="isCollapse"
+      :collapse-transition="false"
+      router
+    >
+      <el-submenu
+        v-for="item in menusList"
+        :key="item.id"
+        :index="item.id + ''"
       >
-        <el-submenu
-          v-for="(item, index) in menusList"
-          :key="item.id"
-          :index="index"
+        <template slot="title">
+          <i :class="menuIcons[item.id]"></i>
+          <span>{{ item.authName }}</span>
+        </template>
+        <el-menu-item
+          v-for="child in item.children"
+          :key="child.id"
+          :index="'/' + item.path"
         >
-          <template slot="title">
-            <i :class="icons[index]"></i>
-            <span>{{ item.authName }}</span>
-          </template>
-          <el-menu-item
-            v-for="(child, index2) in item.children"
-            :key="child.id"
-            :index="index + '-' + index2"
-          >
-            <i class="el-icon-menu"></i>
-            <span slot="title">{{ child.authName }}</span>
-          </el-menu-item>
-        </el-submenu>
-      </el-menu>
-    </el-col>
-  </el-row>
+          <i class="el-icon-menu"></i>
+          <span slot="title">{{ child.authName }}</span>
+        </el-menu-item>
+      </el-submenu>
+    </el-menu>
+  </div>
 </template>
 
 <script lang="ts">
@@ -35,13 +38,14 @@ export default Vue.extend({
   data() {
     return {
       menusList: [],
-      icons: [
-        "el-icon-user-solid",
-        "el-icon-s-opportunity",
-        "el-icon-s-goods",
-        "el-icon-s-claim",
-        "el-icon-s-data"
-      ]
+      menuIcons: {
+        "125": "el-icon-user-solid",
+        "103": "el-icon-s-opportunity",
+        "101": "el-icon-s-goods",
+        "102": "el-icon-s-claim",
+        "145": "el-icon-s-data"
+      },
+      isCollapse: false
     };
   },
   created() {
@@ -55,6 +59,10 @@ export default Vue.extend({
     async getMenuList() {
       const { data: res } = await this.$http.get("menus");
       this.menusList = res.data;
+    },
+    elisCollapse() {
+      this.isCollapse = !this.isCollapse;
+      this.$emit("isCollapse", this.isCollapse);
     }
   }
 });

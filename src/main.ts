@@ -12,8 +12,8 @@ Vue.prototype.$http = axios;
 axios.interceptors.request.use(config => {
   // 请求服务器之前做出的拦截， 所以Authorization为null
   config.headers.Authorization = window.sessionStorage.getItem("stoken");
-  return config
-})
+  return config;
+});
 
 Vue.config.productionTip = false;
 

@@ -24,14 +24,14 @@ import {
   // RadioButton,
   // Checkbox,
   // CheckboxGroup,
-  // Switch,
+  Switch,
   // Select,
   // Option,
   // OptionGroup,
   Button,
   // ButtonGroup,
-  // Table,
-  // TableColumn,
+  Table,
+  TableColumn,
   // DatePicker,
   // TimeSelect,
   // TimePicker,
@@ -54,7 +54,7 @@ import {
   // Progress,
   // Spinner,
   // Badge,
-  // Card,
+  Card,
   // Rate,
   // Steps,
   // Step,
@@ -93,14 +93,14 @@ Vue.use(Input);
 // Vue.use(RadioButton)
 // Vue.use(Checkbox)
 // Vue.use(CheckboxGroup)
-// Vue.use(Switch)
+Vue.use(Switch);
 // Vue.use(Select)
 // Vue.use(Option)
 // Vue.use(OptionGroup)
 Vue.use(Button);
 // Vue.use(ButtonGroup)
-// Vue.use(Table)
-// Vue.use(TableColumn)
+Vue.use(Table);
+Vue.use(TableColumn);
 // Vue.use(DatePicker)
 // Vue.use(TimeSelect)
 // Vue.use(TimePicker)
@@ -123,7 +123,7 @@ Vue.use(Col);
 // Vue.use(Progress)
 // Vue.use(Spinner)
 // Vue.use(Badge)
-// Vue.use(Card)
+Vue.use(Card)
 // Vue.use(Rate)
 // Vue.use(Steps)
 // Vue.use(Step)
