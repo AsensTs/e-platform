@@ -9,6 +9,7 @@
       :collapse="isCollapse"
       :collapse-transition="false"
       router
+      :default-active="activeIndex"
     >
       <el-submenu
         v-for="item in menusList"
@@ -22,7 +23,8 @@
         <el-menu-item
           v-for="child in item.children"
           :key="child.id"
-          :index="'/' + item.path"
+          :index="'/' + child.path"
+          @click="getActiveIndex(child.path)"
         >
           <i class="el-icon-menu"></i>
           <span slot="title">{{ child.authName }}</span>
@@ -45,11 +47,13 @@ export default Vue.extend({
         "102": "el-icon-s-claim",
         "145": "el-icon-s-data"
       },
-      isCollapse: false
+      isCollapse: false,
+      activeIndex: ""
     };
   },
   created() {
     this.getMenuList();
+    this.activeIndex = "/" + window.sessionStorage.getItem("activeLink");
   },
   methods: {
     logout() {
@@ -63,6 +67,10 @@ export default Vue.extend({
     elisCollapse() {
       this.isCollapse = !this.isCollapse;
       this.$emit("isCollapse", this.isCollapse);
+    },
+    getActiveIndex(activeIndex: string) {
+      window.sessionStorage.setItem("activeLink", activeIndex);
+      this.activeIndex = "/" + activeIndex;
     }
   }
 });
