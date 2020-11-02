@@ -53,12 +53,34 @@
           </el-table-column>
           <el-table-column label="操作">
             <template>
-              <el-button type="primary" icon="el-icon-edit" size="small"></el-button>
-              <el-tooltip class="item" effect="dark" content="设置" placement="top">
-                <el-button type="warning" icon="el-icon-s-tools" size="small"></el-button>
+              <el-button
+                type="primary"
+                icon="el-icon-edit"
+                size="small"
+              ></el-button>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="设置"
+                placement="top"
+              >
+                <el-button
+                  type="warning"
+                  icon="el-icon-s-tools"
+                  size="small"
+                ></el-button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="删除用户" placement="top">
-                <el-button type="danger" icon="el-icon-delete" size="small"></el-button>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="删除用户"
+                placement="top"
+              >
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="small"
+                ></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -80,40 +102,61 @@
       </div>
     </el-card>
     <el-dialog title="添加用户" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
+      <el-form :model="addUserForm">
+        <!-- 用户名 -->
         <el-form-item
-          v-model="form.name"
+          v-model="addUserForm.username"
           label="用户名: "
           :label-width="formLabelWidth"
+          prop="username"
         >
           <el-input type="username" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label="用户密码: " :label-width="formLabelWidth">
+        <!-- 用户密码 -->
+        <el-form-item
+          label="用户密码: "
+          :label-width="formLabelWidth"
+          prop="password"
+        >
           <el-input
             type="password"
+            v-model="addUserForm.password"
             placeholder="请输入用户密码"
             autocomplete="off"
             show-password
             prefix-icon="el-icon-key"
           ></el-input>
         </el-form-item>
+        <!-- 确认用户密码 -->
         <el-form-item label="确认密码: " :label-width="formLabelWidth">
           <el-input
             type="password"
+            v-model="checkpassword"
             placeholder="确认密码"
             autocomplete="off"
             show-password
             prefix-icon="el-icon-key"
           ></el-input>
         </el-form-item>
-        <el-form-item label="邮箱地址: " :label-width="formLabelWidth">
-          <el-input type="email" placeholder="请输入邮箱地址"></el-input>
-        </el-form-item>
+        <!-- 电话号码 -->
         <el-form-item label="电话号码: " :label-width="formLabelWidth">
-          <el-input type="phone" placeholder="请输入电话号码"></el-input>
+          <el-input
+            type="mobile"
+            v-model="addUserForm.mobile"
+            placeholder="请输入电话号码"
+          ></el-input>
         </el-form-item>
+        <!-- 邮箱地址 -->
+        <el-form-item label="邮箱地址: " :label-width="formLabelWidth">
+          <el-input
+            type="email"
+            v-model="addUserForm.email"
+            placeholder="请输入邮箱地址"
+          ></el-input>
+        </el-form-item>
+        <!-- 角色权限 -->
         <el-form-item label="角色权限: " :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择">
+          <el-select placeholder="请选择">
             <el-option
               v-for="item in roleOptions"
               :key="item.value"
@@ -122,13 +165,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="状态: " :label-width="formLabelWidth">
+        <!-- 状态管理 -->
+        <el-form-item label="状态管理: " :label-width="formLabelWidth">
           <template>
-            <el-switch
-              v-model="form.mg_state"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-            />
+            <el-switch active-color="#13ce66" inactive-color="#ff4949" />
           </template>
         </el-form-item>
       </el-form>
@@ -151,19 +191,23 @@ export default Vue.extend({
       usersLen: 0,
       total: 0,
       queryInfo: {
+        // 请求数据参数
         query: "",
         pagenum: 1,
         pagesize: 2
       },
-      dialogFormVisible: false,
-      form: {
+      dialogFormVisible: false, // 显示表单弹窗开关
+      // 添加用户表达
+      addUserForm: {
         username: "",
         password: "",
         email: "",
         mobile: ""
       },
-      formLabelWidth: "90px",
+      checkpassword: "", // 检测密码
+      formLabelWidth: "90px", // label宽度
       roleOptions: [
+        // 角色权限列表
         {
           value: "option1",
           label: "普通用户"
