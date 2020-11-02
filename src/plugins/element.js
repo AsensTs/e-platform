@@ -7,8 +7,8 @@ import {
   Main,
   Aside,
   Footer,
-  // Pagination,
-  // Dialog,
+  Pagination,
+  Dialog,
   // Autocomplete,
   // Dropdown,
   // DropdownMenu,
@@ -25,8 +25,8 @@ import {
   // Checkbox,
   // CheckboxGroup,
   Switch,
-  // Select,
-  // Option,
+  Select,
+  Option,
   // OptionGroup,
   Button,
   // ButtonGroup,
@@ -76,8 +76,8 @@ Vue.use(Header);
 Vue.use(Main);
 Vue.use(Aside);
 Vue.use(Footer);
-// Vue.use(Pagination)
-// Vue.use(Dialog)
+Vue.use(Pagination);
+Vue.use(Dialog);
 // Vue.use(Autocomplete)
 // Vue.use(Dropdown)
 // Vue.use(DropdownMenu)
@@ -94,8 +94,8 @@ Vue.use(Input);
 // Vue.use(Checkbox)
 // Vue.use(CheckboxGroup)
 Vue.use(Switch);
-// Vue.use(Select)
-// Vue.use(Option)
+Vue.use(Select);
+Vue.use(Option);
 // Vue.use(OptionGroup)
 Vue.use(Button);
 // Vue.use(ButtonGroup)
