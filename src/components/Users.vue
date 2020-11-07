@@ -101,16 +101,19 @@
         </div>
       </div>
     </el-card>
-    <el-dialog title="添加用户" :visible.sync="dialogFormVisible">
-      <el-form :model="addUserForm">
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisible" width="40%">
+      <el-form :model="addForm" :rules="rules" ref="addForm">
         <!-- 用户名 -->
         <el-form-item
-          v-model="addUserForm.username"
           label="用户名: "
           :label-width="formLabelWidth"
           prop="username"
         >
-          <el-input type="username" placeholder="请输入用户名"></el-input>
+          <el-input
+            type="username"
+            v-model="addForm.username"
+            placeholder="请输入用户名"
+          ></el-input>
         </el-form-item>
         <!-- 用户密码 -->
         <el-form-item
@@ -120,7 +123,7 @@
         >
           <el-input
             type="password"
-            v-model="addUserForm.password"
+            v-model="addForm.password"
             placeholder="请输入用户密码"
             autocomplete="off"
             show-password
@@ -128,10 +131,14 @@
           ></el-input>
         </el-form-item>
         <!-- 确认用户密码 -->
-        <el-form-item label="确认密码: " :label-width="formLabelWidth">
+        <el-form-item
+          label="确认密码: "
+          :label-width="formLabelWidth"
+          prop="checkpassword"
+        >
           <el-input
             type="password"
-            v-model="checkpassword"
+            v-model="addForm.checkpassword"
             placeholder="确认密码"
             autocomplete="off"
             show-password
@@ -139,24 +146,36 @@
           ></el-input>
         </el-form-item>
         <!-- 电话号码 -->
-        <el-form-item label="电话号码: " :label-width="formLabelWidth">
+        <el-form-item
+          label="电话号码: "
+          :label-width="formLabelWidth"
+          prop="mobile"
+        >
           <el-input
             type="mobile"
-            v-model="addUserForm.mobile"
+            v-model="addForm.mobile"
             placeholder="请输入电话号码"
           ></el-input>
         </el-form-item>
         <!-- 邮箱地址 -->
-        <el-form-item label="邮箱地址: " :label-width="formLabelWidth">
+        <el-form-item
+          label="邮箱地址: "
+          :label-width="formLabelWidth"
+          prop="email"
+        >
           <el-input
             type="email"
-            v-model="addUserForm.email"
+            v-model="addForm.email"
             placeholder="请输入邮箱地址"
           ></el-input>
         </el-form-item>
         <!-- 角色权限 -->
-        <el-form-item label="角色权限: " :label-width="formLabelWidth">
-          <el-select placeholder="请选择">
+        <el-form-item
+          label="角色权限: "
+          :label-width="formLabelWidth"
+          prop="role"
+        >
+          <el-select placeholder="请选择" v-model="addForm.role">
             <el-option
               v-for="item in roleOptions"
               :key="item.value"
@@ -166,15 +185,24 @@
           </el-select>
         </el-form-item>
         <!-- 状态管理 -->
-        <el-form-item label="状态管理: " :label-width="formLabelWidth">
+        <el-form-item
+          label="状态管理: "
+          :label-width="formLabelWidth"
+          prop="state"
+        >
           <template>
-            <el-switch active-color="#13ce66" inactive-color="#ff4949" />
+            <el-switch
+              v-model="addForm.state"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            />
           </template>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addUser('addForm')">确 定</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addUser">确 定</el-button>
+        <el-button class="login-reset">重置</el-button>
       </div>
     </el-dialog>
   </div>
@@ -194,15 +222,18 @@ export default Vue.extend({
         // 请求数据参数
         query: "",
         pagenum: 1,
-        pagesize: 2
+        pagesize: 4
       },
       dialogFormVisible: false, // 显示表单弹窗开关
       // 添加用户表达
-      addUserForm: {
+      addForm: {
         username: "",
         password: "",
+        checkpassword: "",
+        mobile: "",
         email: "",
-        mobile: ""
+        role: "普通用户",
+        state: true
       },
       checkpassword: "", // 检测密码
       formLabelWidth: "90px", // label宽度
@@ -220,7 +251,26 @@ export default Vue.extend({
           value: "option3",
           label: "超级管理员"
         }
-      ]
+      ],
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 3, max: 16, message: "长度在 3 到 16 个字符", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
+        ],
+        checkPassword: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
+        ],
+        mobile: [
+          { required: true, message: "请输入手机号码", trigger: "blur" },
+          { min: 11, max: 11, message: "号码无效", trigger: "blur" }
+        ],
+        email: [{ required: true, message: "请输入邮箱", trigger: "blur" }]
+      }
     };
   },
   created() {
@@ -286,9 +336,28 @@ export default Vue.extend({
       }
       this.$message.success("更新用户状态成功!");
     },
-    addUser() {
-      this.dialogFormVisible = false;
-      console.log("addUser");
+    addUser(formName: string) {
+      // this.dialogFormVisible = false;
+      console.log(this.$refs[formName]);
+      const refs: any = this.$refs[formName];
+      refs.validate(async (vaild: any) => {
+        if (vaild) {
+          const { data: res } = await this.$http.post("users", {
+            username: this.addForm.username,
+            password: this.addForm.password,
+            email: this.addForm.email,
+            mobile: this.addForm.mobile
+          });
+          if (res.meta.status === 201) {
+            this.$message.success("创建成功");
+            this.dialogFormVisible = false;
+          } else {
+            this.$message.warning("创建失败");
+          }
+        } else {
+          this.$message.warning("创建失败");
+        }
+      });
     }
   }
 });
@@ -325,7 +394,7 @@ export default Vue.extend({
     }
     .el-form {
       .el-form-item {
-        width: 70%;
+        width: 90%;
       }
     }
   }
