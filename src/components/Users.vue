@@ -28,6 +28,8 @@
           >
         </el-col>
       </el-row>
+
+      <!-- 用户列表 -->
       <div class="userlist">
         <el-table :data="usersList" border style="width: 100%">
           <el-table-column
@@ -51,31 +53,32 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="操作">
-            <template>
-              <el-button
-                type="primary"
-                icon="el-icon-edit"
-                size="small"
-              ></el-button>
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="设置"
-                placement="top"
-              >
+          <el-table-column label="操作" width="170px">
+            <!-- 
+              slot-scope="scope" 可以获取到 row, column, $index 和 store（table 内部的状态管理）的数据
+              tableData是给到table的记录集，scope是table内部基于tableData生成出来的
+              可以理解为elementui 生成表格而创建出来的数据
+             -->
+            <template slot-scope="scope">
+              <!-- 修改用户 -->
+              <el-tooltip effect="dark" content="修改" placement="top">
+                <el-button
+                  type="primary"
+                  icon="el-icon-edit"
+                  size="small"
+                  @click="showEditDialog(scope.row.id)"
+                ></el-button>
+              </el-tooltip>
+              <!-- 设置 -->
+              <el-tooltip effect="dark" content="设置" placement="top">
                 <el-button
                   type="warning"
                   icon="el-icon-s-tools"
                   size="small"
                 ></el-button>
               </el-tooltip>
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="删除用户"
-                placement="top"
-              >
+              <!-- 删除用户 -->
+              <el-tooltip effect="dark" content="删除用户" placement="top">
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
@@ -101,8 +104,15 @@
         </div>
       </div>
     </el-card>
-    <el-dialog title="添加用户" :visible.sync="dialogFormVisible" width="40%">
-      <el-form :model="addForm" :rules="rules" ref="addForm">
+
+    <!-- 添加用户界面 -->
+    <el-dialog
+      title="添加用户"
+      :visible.sync="dialogFormVisible"
+      width="40%"
+      @close="addDialogClosed('addFormRef')"
+    >
+      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef">
         <!-- 用户名 -->
         <el-form-item
           label="用户名: "
@@ -125,21 +135,6 @@
             type="password"
             v-model="addForm.password"
             placeholder="请输入用户密码"
-            autocomplete="off"
-            show-password
-            prefix-icon="el-icon-key"
-          ></el-input>
-        </el-form-item>
-        <!-- 确认用户密码 -->
-        <el-form-item
-          label="确认密码: "
-          :label-width="formLabelWidth"
-          prop="checkpassword"
-        >
-          <el-input
-            type="password"
-            v-model="addForm.checkpassword"
-            placeholder="确认密码"
             autocomplete="off"
             show-password
             prefix-icon="el-icon-key"
@@ -184,25 +179,75 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <!-- 状态管理 -->
-        <el-form-item
-          label="状态管理: "
-          :label-width="formLabelWidth"
-          prop="state"
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addUser('addFormRef')"
+          >确 定</el-button
         >
-          <template>
-            <el-switch
-              v-model="addForm.state"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-            />
-          </template>
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button class="login-reset" @click="addDialogClosed('addFormRef')"
+          >重置</el-button
+        >
+      </div>
+    </el-dialog>
+
+    <!-- 修改编辑用户信息 -->
+    <!-- 
+      1. :visible.sync="dialogChangeFormVisible" elementui中的控制对话框的隐藏和显示
+      2. elementui close事件，Dialog 关闭的回调
+    -->
+    <el-dialog
+      title="修改用户信息"
+      :visible.sync="dialogEditFormVisible"
+      width="50%"
+      @close="addDialogClosed('editFormRef')"
+    >
+      <el-form :model="editForm" :rules="addFormRules" ref="editFormRef">
+        <!-- 用户名 -->
+        <el-form-item
+          label="用户名: "
+          :label-width="formLabelWidth"
+          prop="username"
+        >
+          <el-input
+            type="username"
+            :value="this.editForm.username"
+            disabled
+          ></el-input>
+        </el-form-item>
+        <!-- 电话号码 -->
+        <el-form-item
+          label="电话号码: "
+          :label-width="formLabelWidth"
+          prop="mobile"
+        >
+          <el-input
+            type="mobile"
+            :value="this.editForm.mobile"
+            v-model="this.editForm.mobile"
+          ></el-input>
+        </el-form-item>
+        <!-- 邮箱地址 -->
+        <el-form-item
+          label="邮箱地址: "
+          :label-width="formLabelWidth"
+          prop="email"
+        >
+          <el-input
+            type="email"
+            :value="this.editForm.email"
+            v-model="this.editForm.email"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addUser('addForm')">确 定</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button class="login-reset">重置</el-button>
+        <el-button type="primary" @click="editUser('editFormRef')"
+          >确 定</el-button
+        >
+        <el-button @click="dialogEditFormVisible = false">取 消</el-button>
+        <el-button class="login-reset" @click="eidtDialogClosed('editFormRef')"
+          >重置</el-button
+        >
       </div>
     </el-dialog>
   </div>
@@ -212,10 +257,12 @@
 import Vue from "vue";
 export default Vue.extend({
   data() {
+    // 自定义验证规则 begin
+    // 自定义验证规则 end
+
     return {
       query: "",
       usersList: [],
-      allUsersList: [],
       usersLen: 0,
       total: 0,
       queryInfo: {
@@ -224,18 +271,18 @@ export default Vue.extend({
         pagenum: 1,
         pagesize: 4
       },
-      dialogFormVisible: false, // 显示表单弹窗开关
-      // 添加用户表达
+      // 添加用户对话框开关
+      dialogFormVisible: false,
+      // 修改用户对话框开关
+      dialogEditFormVisible: false,
+      // 添加用户表单
       addForm: {
         username: "",
         password: "",
-        checkpassword: "",
         mobile: "",
         email: "",
-        role: "普通用户",
-        state: true
+        role: "普通用户"
       },
-      checkpassword: "", // 检测密码
       formLabelWidth: "90px", // label宽度
       roleOptions: [
         // 角色权限列表
@@ -252,16 +299,13 @@ export default Vue.extend({
           label: "超级管理员"
         }
       ],
-      rules: {
+      // 添加用户验证表单
+      addFormRules: {
         username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 3, max: 16, message: "长度在 3 到 16 个字符", trigger: "blur" }
+          { min: 3, max: 10, message: "长度在 3 到 16 个字符", trigger: "blur" }
         ],
         password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
-        ],
-        checkPassword: [
           { required: true, message: "请输入密码", trigger: "blur" },
           { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
         ],
@@ -270,13 +314,16 @@ export default Vue.extend({
           { min: 11, max: 11, message: "号码无效", trigger: "blur" }
         ],
         email: [{ required: true, message: "请输入邮箱", trigger: "blur" }]
-      }
+      },
+      // 修改用户
+      editForm: []
     };
   },
   created() {
     this.getUsersData();
   },
   watch: {
+    // 搜索功能
     query: async function(sname) {
       const tmpList: any = []; // 临时数组
       sname = sname.trim(); // 去空格
@@ -336,28 +383,60 @@ export default Vue.extend({
       }
       this.$message.success("更新用户状态成功!");
     },
-    addUser(formName: string) {
-      // this.dialogFormVisible = false;
-      console.log(this.$refs[formName]);
-      const refs: any = this.$refs[formName];
+
+    /*
+      添加新用户
+    */
+    // 添加新用户，先预校验。
+    addUser(addFormRef: string) {
+      const refs: any = this.$refs[addFormRef];
       refs.validate(async (vaild: any) => {
         if (vaild) {
-          const { data: res } = await this.$http.post("users", {
-            username: this.addForm.username,
-            password: this.addForm.password,
-            email: this.addForm.email,
-            mobile: this.addForm.mobile
-          });
+          const { data: res } = await this.$http.post("users", this.addForm);
           if (res.meta.status === 201) {
             this.$message.success("创建成功");
-            this.dialogFormVisible = false;
+            this.dialogFormVisible = false; // 添加用户成功关闭用户框
+            location.reload();
           } else {
             this.$message.warning("创建失败");
+            return;
           }
         } else {
           this.$message.warning("创建失败");
+          return;
         }
       });
+    },
+
+    // 监听添加用户对话框关闭事件
+    addDialogClosed(addFormRef: string) {
+      const refs: any = this.$refs[addFormRef];
+      refs.resetFields(); // 重置
+    },
+
+    /* 
+      修改编辑用户信息
+    */
+    // 打开修改信息显示框
+    async showEditDialog(id: number) {
+      const { data: res } = await this.$http.get("users/" + id);
+
+      if (res.meta.status == 200) {
+        console.log(res);
+        this.editForm = res.data;
+        this.dialogEditFormVisible = true;
+      } else {
+        return this.$message("查询用户信息失败");
+      }
+    },
+    //修改用户信息
+    editUser(editFormRef: string) {
+      const refs: object = this.$refs[editFormRef];
+    },
+    // 监听修改用户的对话框关闭事件
+    eidtDialogClosed(editFormRef: string) {
+      const refs: any = this.$refs[editFormRef];
+      refs.resetFields(); // 重置
     }
   }
 });
@@ -380,8 +459,7 @@ export default Vue.extend({
       .el-table_1_column_7 {
         .cell {
           display: flex;
-          flex-wrap: nowrap;
-          justify-content: space-around;
+          justify-content: center;
         }
       }
     }
