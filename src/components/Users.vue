@@ -200,7 +200,7 @@
       title="修改用户信息"
       :visible.sync="dialogEditFormVisible"
       width="50%"
-      @close="addDialogClosed('editFormRef')"
+      @close="eidtDialogClosed('editFormRef')"
     >
       <el-form :model="editForm" :rules="addFormRules" ref="editFormRef">
         <!-- 用户名 -->
@@ -211,7 +211,7 @@
         >
           <el-input
             type="username"
-            :value="this.editForm.username"
+            :value="editForm.username"
             disabled
           ></el-input>
         </el-form-item>
@@ -223,8 +223,8 @@
         >
           <el-input
             type="mobile"
-            :value="this.editForm.mobile"
-            v-model="this.editForm.mobile"
+            :value="editForm.mobile"
+            v-model="editForm.mobile"
           ></el-input>
         </el-form-item>
         <!-- 邮箱地址 -->
@@ -235,17 +235,17 @@
         >
           <el-input
             type="email"
-            :value="this.editForm.email"
-            v-model="this.editForm.email"
+            :value="editForm.email"
+            v-model="editForm.email"
           ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editUser('editFormRef')"
+        <el-button type="primary" @click="editUserInfo('editFormRef')"
           >确 定</el-button
         >
         <el-button @click="dialogEditFormVisible = false">取 消</el-button>
-        <el-button class="login-reset" @click="eidtDialogClosed('editFormRef')"
+        <el-button class="login-reset" @click="eidtDialogClosed()"
           >重置</el-button
         >
       </div>
@@ -316,7 +316,15 @@ export default Vue.extend({
         email: [{ required: true, message: "请输入邮箱", trigger: "blur" }]
       },
       // 修改用户
-      editForm: []
+      editForm: {
+        id: "",
+        rid: "",
+        username: "",
+        mobile: "",
+        email: "",
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        mg_state: 0
+      }
     };
   },
   created() {
@@ -387,7 +395,7 @@ export default Vue.extend({
     /*
       添加新用户
     */
-    // 添加新用户，先预校验。
+    // 注意：添加新用户，提交表单时候要先预校验，调用element表单函数。
     addUser(addFormRef: string) {
       const refs: any = this.$refs[addFormRef];
       refs.validate(async (vaild: any) => {
@@ -429,13 +437,20 @@ export default Vue.extend({
         return this.$message("查询用户信息失败");
       }
     },
-    //修改用户信息
-    editUser(editFormRef: string) {
-      const refs: object = this.$refs[editFormRef];
+    //修改用户信息, 提交之前预验证 validata()函数
+    async editUserInfo() {
+      const ref: any = this.$refs.editFormRef;
+      ref.validata(async (vaild: any) => {
+        console.log(vaild)
+      });
+      // const { data: res } = await this.$http.put(
+      //   `users/${this.editForm.id}/state/:${true}`
+      // );
+      // console.log(res)
     },
     // 监听修改用户的对话框关闭事件
-    eidtDialogClosed(editFormRef: string) {
-      const refs: any = this.$refs[editFormRef];
+    eidtDialogClosed() {
+      const refs: any = this.$refs.editFormRef;
       refs.resetFields(); // 重置
     }
   }
