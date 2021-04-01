@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 import Welcome from "../components/Welcome.vue";
-import Users from "../components/Users.vue";
+import Users from "../components/users/Users.vue";
 
 Vue.use(VueRouter);
 

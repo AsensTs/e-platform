@@ -2,11 +2,7 @@
   <div class="users">
     <!-- 面包屑导航 -->
     <div class="navigation">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-        <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-      </el-breadcrumb>
+      <breadcrumb :breadcrumbItems="breadcrumbItems"></breadcrumb>
     </div>
     <!-- 用户列表 -->
     <el-card class="box-card">
@@ -23,7 +19,7 @@
           <el-button
             type="primary"
             class="add-users-btn"
-            @click="dialogFormVisible = true"
+            @click="addUserDialogOptions.visibleSync = true"
             >添加用户</el-button
           >
         </el-col>
@@ -78,7 +74,7 @@
                 ></el-button>
               </el-tooltip>
               <!-- 删除用户 -->
-              <el-tooltip effect="dark" content="删除用户" placement="top">
+              <el-tooltip @click="deleteUser(scope.row.id)" effect="dark" content="删除用户" placement="top">
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
@@ -106,102 +102,90 @@
     </el-card>
 
     <!-- 添加用户界面 -->
-    <el-dialog
-      title="添加用户"
-      :visible.sync="dialogFormVisible"
-      width="40%"
-      @close="addDialogClosed('addFormRef')"
-    >
-      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef">
-        <!-- 用户名 -->
-        <el-form-item
-          label="用户名: "
-          :label-width="formLabelWidth"
-          prop="username"
-        >
-          <el-input
-            type="username"
-            v-model="addForm.username"
-            placeholder="请输入用户名"
-          ></el-input>
-        </el-form-item>
-        <!-- 用户密码 -->
-        <el-form-item
-          label="用户密码: "
-          :label-width="formLabelWidth"
-          prop="password"
-        >
-          <el-input
-            type="password"
-            v-model="addForm.password"
-            placeholder="请输入用户密码"
-            autocomplete="off"
-            show-password
-            prefix-icon="el-icon-key"
-          ></el-input>
-        </el-form-item>
-        <!-- 电话号码 -->
-        <el-form-item
-          label="电话号码: "
-          :label-width="formLabelWidth"
-          prop="mobile"
-        >
-          <el-input
-            type="mobile"
-            v-model="addForm.mobile"
-            placeholder="请输入电话号码"
-          ></el-input>
-        </el-form-item>
-        <!-- 邮箱地址 -->
-        <el-form-item
-          label="邮箱地址: "
-          :label-width="formLabelWidth"
-          prop="email"
-        >
-          <el-input
-            type="email"
-            v-model="addForm.email"
-            placeholder="请输入邮箱地址"
-          ></el-input>
-        </el-form-item>
-        <!-- 角色权限 -->
-        <el-form-item
-          label="角色权限: "
-          :label-width="formLabelWidth"
-          prop="role"
-        >
-          <el-select placeholder="请选择" v-model="addForm.role">
-            <el-option
-              v-for="item in roleOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addUser('addFormRef')"
-          >确 定</el-button
-        >
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button class="login-reset" @click="addDialogClosed('addFormRef')"
-          >重置</el-button
-        >
+    <Dialog :options="addUserDialogOptions" @dialogClosed="addDialogClosed">
+      <div>
+        <el-form :model="addForm" :rules="addFormRules" ref="addFormRef">
+          <el-form-item
+            label="用户名: "
+            :label-width="formLabelWidth"
+            prop="username"
+          >
+            <el-input
+              type="username"
+              v-model="addForm.username"
+              placeholder="请输入用户名"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="用户密码: "
+            :label-width="formLabelWidth"
+            prop="password"
+          >
+            <el-input
+              type="password"
+              v-model="addForm.password"
+              placeholder="请输入用户密码"
+              autocomplete="off"
+              show-password
+              prefix-icon="el-icon-key"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="电话号码: "
+            :label-width="formLabelWidth"
+            prop="mobile"
+          >
+            <el-input
+              type="mobile"
+              v-model="addForm.mobile"
+              placeholder="请输入电话号码"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="邮箱地址: "
+            :label-width="formLabelWidth"
+            prop="email"
+          >
+            <el-input
+              type="email"
+              v-model="addForm.email"
+              placeholder="请输入邮箱地址"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="角色权限: "
+            :label-width="formLabelWidth"
+            prop="role"
+          >
+            <el-select placeholder="请选择" v-model="addForm.role">
+              <el-option
+                v-for="item in roleOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="addUser('addFormRef')"
+            >确 定</el-button
+          >
+          <el-button @click="addUserDialogOptions.visibleSync = false">取 消</el-button>
+          <el-button class="login-reset" @click="addDialogClosed('addFormRef')"
+            >重置</el-button
+          >
+        </div>
       </div>
-    </el-dialog>
+    </Dialog>
+    
 
     <!-- 修改编辑用户信息 -->
     <!-- 
       1. :visible.sync="dialogChangeFormVisible" elementui中的控制对话框的隐藏和显示
       2. elementui close事件，Dialog 关闭的回调
     -->
-    <el-dialog
-      title="修改用户信息"
-      :visible.sync="dialogEditFormVisible"
-      width="50%"
-      @close="eidtDialogClosed('editFormRef')"
-    >
+    <Dialog :options="editUserDialogOptions">
       <el-form :model="editForm" :rules="addFormRules" ref="editFormRef">
         <!-- 用户名 -->
         <el-form-item
@@ -249,18 +233,37 @@
           >重置</el-button
         >
       </div>
-    </el-dialog>
+    </Dialog>
+
+
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import breadcrumb from "../public/breadcrumb.vue";
+import Dialog from "../public/dialog.vue";
 export default Vue.extend({
   data() {
-    // 自定义验证规则 begin
-    // 自定义验证规则 end
-
     return {
+      breadcrumbItems: [
+        { name: "用户管理", path: "/" },
+        { name: "用户列表", path: "/uses" },
+      ],
+      // 添加用户对话框开关
+      dialogFormVisible: false,
+      // 添加用户对话框options设置
+      addUserDialogOptions: {
+        title: "添加用户",
+        visibleSync: false,
+        width: "50%",
+        ref: "addFormRef"
+      },
+      editUserDialogOptions: {
+        title: "修改用户",
+        visibleSync: false,
+        width: "50%"
+      },
       query: "",
       usersList: [],
       usersLen: 0,
@@ -271,8 +274,7 @@ export default Vue.extend({
         pagenum: 1,
         pagesize: 4
       },
-      // 添加用户对话框开关
-      dialogFormVisible: false,
+
       // 修改用户对话框开关
       dialogEditFormVisible: false,
       // 添加用户表单
@@ -288,32 +290,42 @@ export default Vue.extend({
         // 角色权限列表
         {
           value: "option1",
-          label: "普通用户"
+          label: "普通用户",
         },
         {
           value: "option2",
-          label: "管理员"
+          label: "管理员",
         },
         {
           value: "option3",
-          label: "超级管理员"
+          label: "超级管理员",
         }
       ],
       // 添加用户验证表单
       addFormRules: {
         username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 3, max: 10, message: "长度在 3 到 16 个字符", trigger: "blur" }
+          {
+            min: 3,
+            max: 10,
+            message: "长度在 3 到 16 个字符",
+            trigger: "blur",
+          }
         ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
+          {
+            min: 6,
+            max: 16,
+            message: "长度在 6 到 16 个字符",
+            trigger: "blur",
+          }
         ],
         mobile: [
           { required: true, message: "请输入手机号码", trigger: "blur" },
           { min: 11, max: 11, message: "号码无效", trigger: "blur" }
         ],
-        email: [{ required: true, message: "请输入邮箱", trigger: "blur" }]
+        email: [{ required: true, message: "请输入邮箱", trigger: "blur" }],
       },
       // 修改用户
       editForm: {
@@ -323,8 +335,8 @@ export default Vue.extend({
         mobile: "",
         email: "",
         // eslint-disable-next-line @typescript-eslint/camelcase
-        mg_state: 0
-      }
+        mg_state: 0,
+      },
     };
   },
   created() {
@@ -332,18 +344,18 @@ export default Vue.extend({
   },
   watch: {
     // 搜索功能
-    query: async function(sname) {
+    query: async function (sname) {
       const tmpList: any = []; // 临时数组
       sname = sname.trim(); // 去空格
       const queryInfoSearch = {
         // 搜索用户列表的参数
         query: "",
         pagenum: 1,
-        pagesize: this.total
+        pagesize: this.total,
       };
       const { data: res } = await this.$http("users", {
         // 搜索用户列表
-        params: queryInfoSearch
+        params: queryInfoSearch,
       });
       const usersList = res.data.users;
       usersList.forEach((item: any) => {
@@ -355,12 +367,12 @@ export default Vue.extend({
       if (sname.length === 0) {
         this.getUsersData();
       }
-    }
+    },
   },
   methods: {
     async getUsersData() {
       const { data: res } = await this.$http("users", {
-        params: this.queryInfo
+        params: this.queryInfo,
       });
       if (res.meta.status === 200) {
         this.$message.success("获取用户列表数据成功");
@@ -430,9 +442,8 @@ export default Vue.extend({
       const { data: res } = await this.$http.get("users/" + id);
 
       if (res.meta.status == 200) {
-        console.log(res);
         this.editForm = res.data;
-        this.dialogEditFormVisible = true;
+        this.editUserDialogOptions.visibleSync = true;
       } else {
         return this.$message("查询用户信息失败");
       }
@@ -440,20 +451,62 @@ export default Vue.extend({
     //修改用户信息, 提交之前预验证 validata()函数
     async editUserInfo() {
       const ref: any = this.$refs.editFormRef;
-      ref.validata(async (vaild: any) => {
-        console.log(vaild)
+      ref.validate(async (vaild: any) => {
+        if (vaild) {
+          console.log(this.editForm);
+          const { data: res } = await this.$http.put(
+            "users/" + this.editForm.id,
+            this.editForm
+          );
+          if (res.meta.status == 200) {
+            this.$message.success("修改成功");
+            this.dialogEditFormVisible = false;
+          } else {
+            this.$message.error("修改失败");
+          }
+        }
       });
       // const { data: res } = await this.$http.put(
       //   `users/${this.editForm.id}/state/:${true}`
       // );
       // console.log(res)
     },
+    /*删除用户*/
+    async deleteUser(id: any) {
+      console.log(id)
+      const requestMessage = await this.$confirm("正在删除用户，是否删除？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).catch(err => err)
+
+      if (requestMessage !== "confirm") {
+        return this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      }
+
+      const { data: res } = this.$http.delete('users/:' + id);
+
+      if (res.data.status !== 200) {
+        return this.$message("删除用户失败");
+      }
+
+      return this.$message("删除用户成功");
+      
+      this.getUsersData();
+    },
     // 监听修改用户的对话框关闭事件
     eidtDialogClosed() {
       const refs: any = this.$refs.editFormRef;
       refs.resetFields(); // 重置
-    }
-  }
+    },
+  },
+  components: { 
+    breadcrumb,
+    Dialog
+  },
 });
 </script>
 

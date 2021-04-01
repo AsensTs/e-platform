@@ -1,11 +1,4 @@
 import Vue from "vue";
-import App from "./App.vue";
-import router from "./router/index";
-import "./plugins/element.js";
-import "./assets/styles/global.scss";
-import tools from "./plugins/tools";
-Vue.use(tools)
-
 import axios from "axios";
 axios.defaults.baseURL = "http://127.0.0.1:8888/api/private/v1/";
 Vue.prototype.$http = axios;
@@ -17,9 +10,11 @@ axios.interceptors.request.use(config => {
   return config;
 });
 
-Vue.config.productionTip = false;
-
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount("#app");
+export default {
+  install(Vue: any, options: any) {
+    Vue.prototype.$getData = async function(url: String, params: any) {
+      const { data: res } = await this.$http(url, params);
+      
+    }
+  }
+};
