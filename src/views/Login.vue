@@ -72,12 +72,15 @@ export default Vue.extend({
     },
     login(formName: string): void {
       const refs: any = this.$refs[formName];
+<<<<<<< HEAD
       console.log(refs, 1);
       /* 
         validate()  这是element的一个验证方法，对整个表单进行校验的方法，参数为一个回调函数。
         该回调函数会在校验结束后被调用，并传入两个参数：是否校验成功和未通过校验的字段。
         若不传入回调函数，则会返回一个 promise
       */
+=======
+>>>>>>> fede9c1ff675eff93efdd61b28bf3f820a8e96b5
       refs.validate(async (valid: any) => {
         if (!valid) return;
         const { data } = await this.$http.post("login", this.loginForm);
