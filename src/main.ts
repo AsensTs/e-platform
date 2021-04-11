@@ -2,7 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router/index";
 import "./plugins/element.js";
-import "./assets/styles/global.scss";
+import "./assets/styles/reset.css";
 import tools from "./plugins/tools";
 Vue.use(tools)
 

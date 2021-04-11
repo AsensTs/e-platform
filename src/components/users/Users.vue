@@ -33,6 +33,7 @@
             label="#"
             width="50px"
           ></el-table-column>
+          <!-- prop 是绑定 usersList 里面的属性的 -->
           <el-table-column prop="username" label="用户名"></el-table-column>
           <el-table-column prop="email" label="邮箱"></el-table-column>
           <el-table-column prop="mobile" label="电话"></el-table-column>
@@ -74,8 +75,9 @@
                 ></el-button>
               </el-tooltip>
               <!-- 删除用户 -->
-              <el-tooltip @click="deleteUser(scope.row.id)" effect="dark" content="删除用户" placement="top">
+              <el-tooltip effect="dark" content="删除用户" placement="top">
                 <el-button
+                  @click="deleteUser(scope.row.id)"
                   type="danger"
                   icon="el-icon-delete"
                   size="small"
@@ -171,14 +173,15 @@
           <el-button type="primary" @click="addUser('addFormRef')"
             >确 定</el-button
           >
-          <el-button @click="addUserDialogOptions.visibleSync = false">取 消</el-button>
+          <el-button @click="addUserDialogOptions.visibleSync = false"
+            >取 消</el-button
+          >
           <el-button class="login-reset" @click="addDialogClosed('addFormRef')"
             >重置</el-button
           >
         </div>
       </div>
     </Dialog>
-    
 
     <!-- 修改编辑用户信息 -->
     <!-- 
@@ -234,8 +237,6 @@
         >
       </div>
     </Dialog>
-
-
   </div>
 </template>
 
@@ -248,7 +249,7 @@ export default Vue.extend({
     return {
       breadcrumbItems: [
         { name: "用户管理", path: "/" },
-        { name: "用户列表", path: "/uses" },
+        { name: "用户列表", path: "/uses" }
       ],
       // 添加用户对话框开关
       dialogFormVisible: false,
@@ -290,15 +291,15 @@ export default Vue.extend({
         // 角色权限列表
         {
           value: "option1",
-          label: "普通用户",
+          label: "普通用户"
         },
         {
           value: "option2",
-          label: "管理员",
+          label: "管理员"
         },
         {
           value: "option3",
-          label: "超级管理员",
+          label: "超级管理员"
         }
       ],
       // 添加用户验证表单
@@ -309,7 +310,7 @@ export default Vue.extend({
             min: 3,
             max: 10,
             message: "长度在 3 到 16 个字符",
-            trigger: "blur",
+            trigger: "blur"
           }
         ],
         password: [
@@ -318,14 +319,14 @@ export default Vue.extend({
             min: 6,
             max: 16,
             message: "长度在 6 到 16 个字符",
-            trigger: "blur",
+            trigger: "blur"
           }
         ],
         mobile: [
           { required: true, message: "请输入手机号码", trigger: "blur" },
           { min: 11, max: 11, message: "号码无效", trigger: "blur" }
         ],
-        email: [{ required: true, message: "请输入邮箱", trigger: "blur" }],
+        email: [{ required: true, message: "请输入邮箱", trigger: "blur" }]
       },
       // 修改用户
       editForm: {
@@ -335,8 +336,8 @@ export default Vue.extend({
         mobile: "",
         email: "",
         // eslint-disable-next-line @typescript-eslint/camelcase
-        mg_state: 0,
-      },
+        mg_state: 0
+      }
     };
   },
   created() {
@@ -344,18 +345,18 @@ export default Vue.extend({
   },
   watch: {
     // 搜索功能
-    query: async function (sname) {
+    query: async function(sname) {
       const tmpList: any = []; // 临时数组
       sname = sname.trim(); // 去空格
       const queryInfoSearch = {
         // 搜索用户列表的参数
         query: "",
         pagenum: 1,
-        pagesize: this.total,
+        pagesize: this.total
       };
       const { data: res } = await this.$http("users", {
         // 搜索用户列表
-        params: queryInfoSearch,
+        params: queryInfoSearch
       });
       const usersList = res.data.users;
       usersList.forEach((item: any) => {
@@ -367,12 +368,12 @@ export default Vue.extend({
       if (sname.length === 0) {
         this.getUsersData();
       }
-    },
+    }
   },
   methods: {
     async getUsersData() {
       const { data: res } = await this.$http("users", {
-        params: this.queryInfo,
+        params: this.queryInfo
       });
       if (res.meta.status === 200) {
         this.$message.success("获取用户列表数据成功");
@@ -473,40 +474,43 @@ export default Vue.extend({
     },
     /*删除用户*/
     async deleteUser(id: any) {
-      console.log(id)
-      const requestMessage = await this.$confirm("正在删除用户，是否删除？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).catch(err => err)
+      console.log(typeof id);
+      const requestMessage = await this.$confirm(
+        "正在删除用户，是否删除？",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).catch(err => err);
 
       if (requestMessage !== "confirm") {
         return this.$message({
-          type: 'info',
-          message: '已取消删除'
+          type: "info",
+          message: "已取消删除"
         });
       }
 
-      const { data: res } = this.$http.delete('users/:' + id);
-
-      if (res.data.status !== 200) {
+      const { data: res } = await this.$http.delete("users/" + id);
+      console.log(res);
+      if (res.meta.status !== 200) {
         return this.$message("删除用户失败");
       }
 
-      return this.$message("删除用户成功");
-      
+      this.$message("删除用户成功");
       this.getUsersData();
     },
     // 监听修改用户的对话框关闭事件
     eidtDialogClosed() {
       const refs: any = this.$refs.editFormRef;
       refs.resetFields(); // 重置
-    },
+    }
   },
-  components: { 
+  components: {
     breadcrumb,
     Dialog
-  },
+  }
 });
 </script>
 

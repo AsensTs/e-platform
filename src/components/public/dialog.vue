@@ -3,7 +3,7 @@
     :title="dialogOptions.title"
     :visible.sync="dialogOptions.visibleSync"
     :width="dialogOptions.width"
-		@close="dialogCloseEvent"
+    @close="dialogCloseEvent"
   >
     <slot></slot>
   </el-dialog>
@@ -22,17 +22,17 @@ export default {
     return {
       dialogOptions: this.options
         ? this.options
-        : { title: "", visibleSync: false, width: "50%" }
+        : { title: "", visibleSync: false, width: "50%" },
     };
   },
-	methods: {
-		// Dialog 关闭的回调
-		dialogCloseEvent() {
-			if (this.dialogOptions.ref) {
-				this.$emit('dialogClosed', this.dialogOptions.ref)
-			}
-		}
-	}
+  methods: {
+    // Dialog 关闭的回调
+    dialogCloseEvent() {
+      if (this.dialogOptions.ref) {
+        this.$emit("dialogClosed", this.dialogOptions.ref);
+      }
+    }
+  }
 };
 </script>
 

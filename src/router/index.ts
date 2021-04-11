@@ -2,11 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 import Welcome from "../components/Welcome.vue";
-<<<<<<< HEAD
 import Users from "../components/users/Users.vue";
-=======
-import Users from "../components/Users.vue";
->>>>>>> fede9c1ff675eff93efdd61b28bf3f820a8e96b5
 
 Vue.use(VueRouter);
 
@@ -18,11 +14,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/login",
     name: "Login",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Login.vue")
+    component: () => import("../views/Login.vue")
   },
   {
     path: "/home",
@@ -37,6 +29,10 @@ const routes: Array<RouteConfig> = [
       {
         path: "/users",
         component: Users
+      },
+      {
+        path: "/rights",
+        component: () => import("../components/rights/Rights.vue")
       }
     ]
   }

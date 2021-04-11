@@ -12,9 +12,8 @@ axios.interceptors.request.use(config => {
 
 export default {
   install(Vue: any, options: any) {
-    Vue.prototype.$getData = async function(url: String, params: any) {
+    Vue.prototype.$getData = async function(url: any, params: any) {
       const { data: res } = await this.$http(url, params);
-      
     }
   }
 };
